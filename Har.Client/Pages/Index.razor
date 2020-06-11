@@ -21,36 +21,36 @@
 
 @code {
 
-    Claim[] claims;
+    IEnumerable<Claim> claims = new List<Claim>();
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            var state = await AuthProvider.GetAuthenticationStateAsync();
+            //var state = await AuthProvider.GetAuthenticationStateAsync();
 
-            var tokenResult = await TokenProvider.RequestAccessToken();
+            //var tokenResult = await TokenProvider.RequestAccessToken();
 
-            var token = tokenResult.TryGetToken(out var _token) ? _token : null;
+            //var token = tokenResult.TryGetToken(out var _token) ? _token : null;
 
-            if (token != null)
+            //if (token != null)
+            //{
+            //    Console.WriteLine($"TOKEN: {token.Value}");
+            //}
+
+            //claims = state.User.Claims.ToArray();
+
+            try
             {
-                Console.WriteLine($"TOKEN: {token.Value}");
+                var client = ClientFactory.CreateClient("ServerAPI");
+
+                claims = await client.GetFromJsonAsync<IEnumerable<Claim>>("/api/values");
             }
-
-            claims = state.User.Claims.ToArray();
-
-            //try
-            //{
-            //    var client = ClientFactory.CreateClient("ServerAPI");
-
-            //    claims = await client.GetFromJsonAsync<Claim[]>("/api/values");
-            //}
-            //catch (Microsoft.AspNetCore.Components.WebAssembly.Authentication.AccessTokenNotAvailableException ex)
-            //{
-            //    Console.WriteLine(ex.Message);
-            //    ex.Redirect();
-            //}
+            catch (Microsoft.AspNetCore.Components.WebAssembly.Authentication.AccessTokenNotAvailableException ex)
+            {
+                Console.WriteLine(ex.Message);
+                ex.Redirect();
+            }
         }
         catch (Exception ex)
         {

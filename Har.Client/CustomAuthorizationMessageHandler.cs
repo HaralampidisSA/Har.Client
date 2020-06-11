@@ -9,7 +9,7 @@ namespace Har.Client
         {
             ConfigureHandler(
                 authorizedUrls: new[] { "http://10.116.85.14:9997" },
-                scopes: new[] { "api1" });
+                scopes: new[] { "dev.har.api" });
         }
     }
 }
