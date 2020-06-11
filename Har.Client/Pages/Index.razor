@@ -1,0 +1,62 @@
+﻿@page "/"
+@inject AuthenticationStateProvider AuthProvider
+@inject Microsoft.AspNetCore.Components.WebAssembly.Authentication.IAccessTokenProvider TokenProvider
+@inject IHttpClientFactory ClientFactory
+@attribute [Authorize]
+
+<div class="container-fluid">
+    @if (claims != null)
+    {
+        foreach (var claim in claims)
+        {
+            <div class="row">
+                <div class="col-12">
+                    <strong>@claim.Type</strong> @claim.Value
+                </div>
+            </div>
+        }
+    }
+</div>
+
+
+@code {
+
+    Claim[] claims;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var state = await AuthProvider.GetAuthenticationStateAsync();
+
+            var tokenResult = await TokenProvider.RequestAccessToken();
+
+            var token = tokenResult.TryGetToken(out var _token) ? _token : null;
+
+            if (token != null)
+            {
+                Console.WriteLine($"TOKEN: {token.Value}");
+            }
+
+            claims = state.User.Claims.ToArray();
+
+            //try
+            //{
+            //    var client = ClientFactory.CreateClient("ServerAPI");
+
+            //    claims = await client.GetFromJsonAsync<Claim[]>("/api/values");
+            //}
+            //catch (Microsoft.AspNetCore.Components.WebAssembly.Authentication.AccessTokenNotAvailableException ex)
+            //{
+            //    Console.WriteLine(ex.Message);
+            //    ex.Redirect();
+            //}
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+
+
+    }
+}

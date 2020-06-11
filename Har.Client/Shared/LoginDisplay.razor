@@ -1,0 +1,30 @@
+﻿@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+@inject NavigationManager Navigation
+@inject SignOutSessionStateManager SignOutManager
+
+<AuthorizeView>
+    <Authorized>
+        @if (context.User.Identity.IsAuthenticated)
+        {
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <button class="btn btn-sm float-right" @onclick="BeginSignOut">logout</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </Authorized>
+</AuthorizeView>
+
+
+
+
+@code {
+    private async Task BeginSignOut(MouseEventArgs e)
+    {
+        await SignOutManager.SetSignOutState();
+        Navigation.NavigateTo("authentication/logout");
+    }
+}
